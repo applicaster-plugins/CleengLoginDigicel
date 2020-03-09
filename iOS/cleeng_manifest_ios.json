@@ -1,33 +1,31 @@
 {
   "api": {
     "require_startup_execution": true,
-    "class_name": "CleengLogin.CleengLoginPlugin"
+    "class_name": "CleengLoginDigicel.CleengLoginPlugin"
   },
   "dependency_repository_url": [
-    "git@github.com:applicaster/zapp-login-plugin-cleeng.git",
+    "git@github.com:sborkin/zapp-login-plugin-cleeng.git",
     "git@github.com:applicaster/applicaster-cam-framework.git",
     "git@github.com:applicaster/applicaster-iap-framework.git"
   ],
   "platform": "ios",
-  "author_name": "Roman Karpievich, Egor Brel",
-  "author_email": "r.karpievich@applicaster.com",
-  "manifest_version": "2.3.0",
-  "dependency_version": "2.3.0",
-  "name": "Cleeng Login and Payments",
+  "author_name": "S. Borkin",
+  "author_email": "s.borkin@applicaster.com",
+  "manifest_version": "1.0.0",
+  "dependency_version": "1.0.0",
+  "name": "Cleeng Login and Payments for Digicel",
   "description": "",
   "cover_image": "",
   "type": "login",
   "screen": true,
   "preload": true,
-  "identifier": "Cleeng",
+  "identifier": "CleengDigicel",
   "ui_builder_support": true,
-  "dependency_name": "CleengLogin",
+  "dependency_name": "CleengLoginDigicel",
   "whitelisted_account_ids": [
-    "5a4516fa41442c000b0195d6",
-    "5af949534da8f300080050f9",
-    "5c882170bc9708000894152b"
+    "5af949534da8f300080050f9"
   ],
-  "min_zapp_sdk": "13.0.0-RC",
+  "min_zapp_sdk": "13.0.0",
   "deprecated_since_zapp_sdk": "",
   "unsupported_since_zapp_sdk": "",
   "react_native": false,
