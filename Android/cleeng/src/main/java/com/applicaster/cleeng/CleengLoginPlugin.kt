@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.fragment.app.Fragment
 import com.applicaster.cam.CamFlow
+import com.applicaster.cam.SignUpCallback
 import com.applicaster.cam.Trigger
 import com.applicaster.cleeng.network.executeRequest
 import com.applicaster.cleeng.utils.isNullOrEmpty
@@ -126,6 +127,10 @@ class CleengLoginPlugin : LoginContract, PluginScreen, HookScreen {
             Session.setCamFlow(CamFlow.LOGOUT)
             cleengService.logout(it, callback)
         }
+    }
+
+    fun signUp(authData: HashMap<String, String>, callback: LoginContract.Callback?) {
+        cleengService.signUp(authData, callback)
     }
 
     override fun generateFragment(

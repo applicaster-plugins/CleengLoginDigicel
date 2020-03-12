@@ -4,6 +4,7 @@ import android.content.Context
 import com.applicaster.authprovider.AuthenticationProviderUtil
 import com.applicaster.cam.CamFlow
 import com.applicaster.cam.ContentAccessManager
+import com.applicaster.cam.SignUpCallback
 import com.applicaster.cleeng.cam.CamContract
 import com.applicaster.cleeng.data.Offer
 import com.applicaster.cleeng.network.NetworkHelper
@@ -157,4 +158,15 @@ class CleengService {
         ContentAccessManager.onProcessStarted(camContract, context)
     }
 
+    fun signUp(authData: HashMap<String, String>, callback: LoginContract.Callback?) {
+        camContract.signUp(authData, object : SignUpCallback {
+            override fun onActionSuccess() {
+                callback?.onResult(true)
+            }
+
+            override fun onFailure(msg: String) {
+                callback?.onResult(false)
+            }
+        })
+    }
 }
