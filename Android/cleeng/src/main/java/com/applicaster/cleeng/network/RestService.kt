@@ -75,4 +75,10 @@ interface RestService {
     suspend fun restoreSubscriptions(
         @Body restoreSubscriptionsData: RestoreSubscriptionsRequestData
     ): Response<List<RestoreSubscriptionsResponseData>>
+
+    @FormUrlEncoded
+    @POST("generateCustomerToken")
+    suspend fun generateCustomerToken(
+            @Field("email") email: String
+    ): Response<List<AuthResponseData>>
 }

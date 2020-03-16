@@ -115,4 +115,14 @@ class NetworkHelper {
             Result.Failure(WebServiceError.DEFAULT)
         }
     }
+
+    suspend fun generateCustomerToken(email: String):
+            Result<List<AuthResponseData>, WebServiceError> {
+        return try {
+            val response = retrofitService.generateCustomerToken(email)
+            handleResponse(response)
+        } catch (t: Throwable) {
+            Result.Failure(WebServiceError.DEFAULT)
+        }
+    }
 }

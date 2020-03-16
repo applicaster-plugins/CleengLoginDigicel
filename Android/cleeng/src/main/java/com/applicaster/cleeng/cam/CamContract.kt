@@ -116,11 +116,14 @@ class CamContract(private val cleengService: CleengService) : ICamContract {
     }
 
     override fun signUp(authFieldsInput: HashMap<String, String>, callback: SignUpCallback) {
+        val email = authFieldsInput["email"]
+        val password = authFieldsInput["password"]
+
         executeRequest {
             val result = cleengService.networkHelper.register(
                     RegisterRequestData(
-                            authFieldsInput["email"].orEmpty(),
-                            authFieldsInput["password"].orEmpty(),
+                            email.orEmpty(),
+                            password.orEmpty(),
                             null,
                             Session.userData.country,
                             Session.userData.locale,
@@ -136,6 +139,21 @@ class CamContract(private val cleengService: CleengService) : ICamContract {
                 }
 
                 is Result.Failure -> {
+                    if (email != null && password == null && result.value == WebServiceError.USER_ALREADY_EXISTS) { // this indicates to try and generate the customer token for a login plugin that uses cleeng for purchases only
+                        val generateCustomerTokenResult = cleengService.networkHelper.generateCustomerToken(email = email)
+                        when (generateCustomerTokenResult) {
+                            is Result.Success -> {
+                                val generateCustomerTokenDataResult: List<AuthResponseData>? = generateCustomerTokenResult.value
+                                if (generateCustomerTokenDataResult != null && generateCustomerTokenDataResult.isNotEmpty()) {
+                                    cleengService.parseAuthResponse(generateCustomerTokenDataResult)
+                                }
+
+                                callback.onActionSuccess()
+                                return@executeRequest
+                            }
+                        }
+                    }
+
                     callback.onFailure(getErrorMessage(result.value))
                 }
             }
