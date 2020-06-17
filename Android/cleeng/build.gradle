@@ -30,6 +30,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    packagingOptions {
+        exclude("META-INF/*.kotlin_module")
+    }
 }
 
 repositories {
@@ -59,7 +62,7 @@ dependencies {
 //    if (devCAM != null) {
 //        implementation project(':cam')
 //    } else {
-//        api(camPath)
+//
 //    }
     api(camPath)
     // Applicaster SDK
@@ -71,6 +74,8 @@ dependencies {
     } else {
         api(applicasterSDKPath)
     }
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.27.0-eap13"
 
     implementation ('com.github.LiquidPlayer:LiquidCore:0.6.2'){
         exclude group: 'com.android.support', module:'appcompat-v7'
