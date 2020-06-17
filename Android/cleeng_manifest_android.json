@@ -10,10 +10,10 @@
     }
   ],
   "platform": "android",
-  "author_name": "S. Borkin",
+  "author_name": "S. Borkin, Barak Halevi",
   "author_email": "s.borkin@applicaster.com",
-  "manifest_version": "1.0.0",
-  "dependency_version": "1.0.0",
+  "manifest_version": "1.0.1",
+  "dependency_version": "1.0.+",
   "name": "Cleeng Login and Payments for Digicel",
   "description": "",
   "cover_image": "",

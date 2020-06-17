@@ -56,12 +56,12 @@ dependencies {
     // Cam framework
     def devCAM = findProject(':cam')
     def camPath = 'com.applicaster:applicaster-cam-framework:4.2.0'
-    if (devCAM != null) {
-        implementation project(':cam')
-    } else {
-        api(camPath)
-    }
-
+//    if (devCAM != null) {
+//        implementation project(':cam')
+//    } else {
+//        api(camPath)
+//    }
+    api(camPath)
     // Applicaster SDK
     def applicasterSDKPath = 'com.applicaster:applicaster-android-sdk:5.0.1'
     // Check if an open SDK is defined - if not use the closed one.
@@ -86,6 +86,7 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'org.jetbrains.dokka-android'
 
 buildscript {
+    ext.kotlin_version = '1.3.50'
     repositories {
         jcenter()
         google()
@@ -96,6 +97,8 @@ buildscript {
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
         classpath "org.jetbrains.dokka:dokka-android-gradle-plugin:0.9.17"
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
     }
 }
 
@@ -126,68 +129,62 @@ def compareVersions = { versionFromTag, versionFromProps ->
     return versionFromTag == versionFromProps
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId GROUP
+project.afterEvaluate {
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                groupId GROUP
 
-            def versionFromTag = getVersionName()
-            if (versionFromTag != null) {
-                // Check if version from tag equals to version from properties
-                if (!compareVersions(versionFromTag, VERSION))
-                    throw new Exception("Incomparable version value from tag (${versionFromTag}) and properties (${VERSION})!")
+                def versionFromTag = getVersionName()
+                if (versionFromTag != null) {
+                    // There is a tag existing on the current commit - we can upload to Bintray
+                    version versionFromTag
 
-                // There is a tag existing on the current commit - we can upload to Bintray
-                version versionFromTag
-
-                artifactId ARTIFACT_ID
-                artifact ("build/outputs/aar/${project.getName()}-release.aar") {
-                    builtBy assemble
-                }
-                afterEvaluate {
+                    artifactId ARTIFACT_ID
+                    artifact "build/outputs/aar/" + ARTIFACT_FILE_NAME + "-release.aar"
                     artifact androidJavadocsJar
                     artifact androidSourcesJar
-                }
-                pom.withXml {
-                    Node root = asNode()
-                    root.appendNode('name', ARTIFACT_ID)
-                    root.appendNode('description', POM_DESCRIPTION)
-                    root.appendNode('url', POM_URL)
+                    pom.withXml {
+                        Node root = asNode()
+                        root.appendNode('name', ARTIFACT_ID)
+                        root.appendNode('description', POM_DESCRIPTION)
+                        root.appendNode('url', POM_URL)
 
-                    def issues = root.appendNode('issueManagement')
-                    issues.appendNode('system', 'github')
-                    issues.appendNode('url', ISSUE_URL)
+                        def issues = root.appendNode('issueManagement')
+                        issues.appendNode('system', 'github')
+                        issues.appendNode('url', ISSUE_URL)
 
-                    def scm = root.appendNode('scm')
-                    scm.appendNode('url', POM_SCM_URL)
-                    scm.appendNode('connection', POM_SCM_CONNECTION)
-                    scm.appendNode('developerConnection', POM_SCM_DEV_CONNECTION)
+                        def scm = root.appendNode('scm')
+                        scm.appendNode('url', POM_SCM_URL)
+                        scm.appendNode('connection', POM_SCM_CONNECTION)
+                        scm.appendNode('developerConnection', POM_SCM_DEV_CONNECTION)
 
-                    def license = root.appendNode('licenses').appendNode('license')
-                    license.appendNode('name', POM_LICENCE_NAME)
-                    license.appendNode('url', POM_LICENCE_URL)
-                    license.appendNode('distribution', POM_LICENCE_DIST)
+                        def license = root.appendNode('licenses').appendNode('license')
+                        license.appendNode('name', POM_LICENCE_NAME)
+                        license.appendNode('url', POM_LICENCE_URL)
+                        license.appendNode('distribution', POM_LICENCE_DIST)
 
-                    def developer = root.appendNode('developers').appendNode('developer')
-                    developer.appendNode('id', POM_DEVELOPER_ID)
-                    developer.appendNode('name', POM_DEVELOPER_NAME)
-                    developer.appendNode('email', POM_DEVELOPER_EMAIL)
+                        def developer = root.appendNode('developers').appendNode('developer')
+                        developer.appendNode('id', POM_DEVELOPER_ID)
+                        developer.appendNode('name', POM_DEVELOPER_NAME)
+                        developer.appendNode('email', POM_DEVELOPER_EMAIL)
 
-                    def dependenciesNode = asNode().appendNode('dependencies')
-                    configurations.api.allDependencies.each {
-                        if (!it.name.contains('unspecified')) {
-                            def dependencyNode = dependenciesNode.appendNode('dependency')
-                            dependencyNode.appendNode('groupId', it.group)
-                            dependencyNode.appendNode('artifactId', it.name)
-                            dependencyNode.appendNode('version', it.version)
+                        def dependenciesNode = asNode().appendNode('dependencies')
+                        configurations.implementation.allDependencies.each {
+                            if (!it.name.is('unspecified')) {
+                                def dependencyNode = dependenciesNode.appendNode('dependency')
+                                dependencyNode.appendNode('groupId', it.group)
+                                dependencyNode.appendNode('artifactId', it.name)
+                                dependencyNode.appendNode('version', it.version)
+                            }
                         }
-                    }
-                    configurations.implementation.allDependencies.each {
-                        if (!it.name.contains('unspecified')) {
-                            def dependencyNode = dependenciesNode.appendNode('dependency')
-                            dependencyNode.appendNode('groupId', it.group)
-                            dependencyNode.appendNode('artifactId', it.name)
-                            dependencyNode.appendNode('version', it.version)
+                        configurations.api.allDependencies.each {
+                            if (!it.name.is('unspecified')) {
+                                def dependencyNode = dependenciesNode.appendNode('dependency')
+                                dependencyNode.appendNode('groupId', it.group)
+                                dependencyNode.appendNode('artifactId', it.name)
+                                dependencyNode.appendNode('version', it.version)
+                            }
                         }
                     }
                 }
@@ -196,11 +193,11 @@ publishing {
     }
 }
 
-static def getBintrayUserProperty() {
+def getBintrayUserProperty() {
     return System.getenv("BINTRAY_USER")
 }
 
-static def getBintrayApiKeyProperty() {
+def getBintrayApiKeyProperty() {
     return System.getenv("BINTRAY_API_KEY")
 }
 
@@ -208,12 +205,11 @@ bintray {
     user = bintrayUserProperty
     key = bintrayApiKeyProperty
     publications = ['mavenJava']
-
+    override = true
     dryRun = false
     publish = true
-    override = true
     pkg {
-        repo = 'maven_plugins'
+        repo = 'maven'
         name = ARTIFACT_ID
         userOrg = 'applicaster-ltd'
         websiteUrl = POM_URL
@@ -228,15 +224,17 @@ bintray {
     }
 }
 
-dokka {
-    outputFormat = 'javadoc'
-    outputDirectory = "$buildDir/javadoc"
-    reportUndocumented = false
+task androidJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    excludes = ['**/*.kt']
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    failOnError false
 }
 
-task androidJavadocsJar(type: Jar, dependsOn: dokka) {
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
     classifier = 'javadoc'
-    from "$buildDir/javadoc"
+    excludes = ['**/*.kt']
+    from androidJavadocs.destinationDir
 }
 
 task androidSourcesJar(type: Jar) {
@@ -253,6 +251,7 @@ artifacts {
     archives androidJavadocsJar
     archives androidJar
 }
+
 kotlin {
     experimental {
         coroutines "enable"
