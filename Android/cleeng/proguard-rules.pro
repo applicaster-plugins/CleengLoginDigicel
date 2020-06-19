@@ -68,3 +68,4 @@
 -keepclasseswithmembers, allowobfuscation class * {
     @retrofit2.http.* <methods>;
 }
+-repackageclasses com.applicaster.cleeng
