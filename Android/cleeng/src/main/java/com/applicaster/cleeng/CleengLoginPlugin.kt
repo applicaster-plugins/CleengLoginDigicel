@@ -56,8 +56,22 @@ class CleengLoginPlugin : LoginContract, PluginScreen, HookScreen {
                 additionalParams?.let {
                     handleUserAccountComponentTrigger(callback, context)
                 }
-            else
+            else {
+                setUpLoginContractListener(callback)
                 context?.let { cleengService.handleLogin(playable, this, it) }
+            }
+        }
+    }
+
+    private fun setUpLoginContractListener(callback: LoginContract.Callback?) {
+        hookListener = object : HookScreenListener {
+            override fun hookCompleted(hookProps: MutableMap<String, Any>?) {
+                callback?.onResult(true)
+            }
+
+            override fun hookFailed(hookProps: MutableMap<String, Any>?) {
+                callback?.onResult(false)
+            }
         }
     }
 
