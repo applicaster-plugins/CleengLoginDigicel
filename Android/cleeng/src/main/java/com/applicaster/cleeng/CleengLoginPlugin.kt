@@ -137,10 +137,25 @@ class CleengLoginPlugin : LoginContract, PluginScreen, HookScreen {
         additionalParams: MutableMap<Any?, Any?>?,
         callback: LoginContract.Callback?
     ) {
-        context?.let {
-            Session.setCamFlow(CamFlow.LOGOUT)
-            cleengService.logout(it, callback)
+        val skipConfirmationDialog = checkSkipConfirmationDialogParams(additionalParams)
+        if (skipConfirmationDialog == true) {
+            context?.let {
+                cleengService.logout(context, callback, false)
+            }
+        } else {
+            context?.let {
+                Session.setCamFlow(CamFlow.LOGOUT)
+                cleengService.logout(it, callback)
+            }
         }
+    }
+
+    private fun checkSkipConfirmationDialogParams(additionalParams: MutableMap<Any?, Any?>?) : Boolean? {
+        return additionalParams?.let {
+            if (it.containsKey(KEY_SKIP_LOGOUT_CONFIRMATION))
+                it[KEY_SKIP_LOGOUT_CONFIRMATION].toString().toBoolean()
+            else
+                false }
     }
 
     fun signUp(authData: HashMap<String, String>, callback: LoginContract.Callback?) {
@@ -211,5 +226,6 @@ class CleengLoginPlugin : LoginContract, PluginScreen, HookScreen {
 
     companion object {
         const val KEY_USER_ACCOUNT_TRIGGER = "UserAccountTrigger"
+        const val KEY_SKIP_LOGOUT_CONFIRMATION = "skipConfirmationDialog"
     }
 }

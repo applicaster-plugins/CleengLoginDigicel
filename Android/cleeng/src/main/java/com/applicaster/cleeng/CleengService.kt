@@ -154,9 +154,13 @@ class CleengService {
 
     fun isUserLogged(): Boolean = getUserToken().isNotEmpty()
 
-    fun logout(context: Context, callback: LoginContract.Callback?) {
-        this.logoutListener = callback
-        ContentAccessManager.onProcessStarted(camContract, context)
+    fun logout(context: Context, callback: LoginContract.Callback?, showConfirmationDialog: Boolean = true) {
+        if (showConfirmationDialog) {
+            this.logoutListener = callback
+            ContentAccessManager.onProcessStarted(camContract, context)
+        } else {
+            camContract.logout(true)
+        }
     }
 
     fun signUp(authData: HashMap<String, String>, callback: LoginContract.Callback?) {
