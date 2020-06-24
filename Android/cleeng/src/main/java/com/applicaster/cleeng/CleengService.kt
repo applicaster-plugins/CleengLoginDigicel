@@ -159,6 +159,7 @@ class CleengService {
             this.logoutListener = callback
             ContentAccessManager.onProcessStarted(camContract, context)
         } else {
+            this.logoutListener = callback
             camContract.logout(true)
         }
     }
