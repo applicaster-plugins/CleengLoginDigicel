@@ -4,7 +4,7 @@
     "class_name": "CleengLoginDigicel.CleengLoginPlugin"
   },
   "dependency_repository_url": [
-    "git@github.com:sborkin/zapp-login-plugin-cleeng.git",
+    "git@github.com:applicaster-plugins/CleengLoginDigicel.git",
     "git@github.com:applicaster/applicaster-cam-framework.git",
     "git@github.com:applicaster/applicaster-iap-framework.git"
   ],

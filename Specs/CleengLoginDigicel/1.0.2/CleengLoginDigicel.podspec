@@ -15,6 +15,7 @@ Pod::Spec.new do |s|
   s.dependency 'Alamofire'
   s.dependency 'CAM', '3.5.0'
   s.dependency 'ApplicasterSDK'
+  s.dependency 'ZappLoginPluginsSDK'
   s.xcconfig =  { 'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
     'ENABLE_BITCODE' => 'YES',
     'SWIFT_VERSION' => '5.1'
